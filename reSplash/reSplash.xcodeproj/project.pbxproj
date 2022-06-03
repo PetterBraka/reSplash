@@ -23,6 +23,7 @@
 		A1C9D2C6284A5CC800740078 /* Swinject in Frameworks */ = {isa = PBXBuildFile; productRef = A1C9D2C5284A5CC800740078 /* Swinject */; };
 		A1C9D2C8284A5CE000740078 /* MainAssembler.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C9D2C7284A5CE000740078 /* MainAssembler.swift */; };
 		A1C9D2CA284A5D9A00740078 /* Managerassably.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C9D2C9284A5D9A00740078 /* Managerassably.swift */; };
+		A1C9D2CC284A603E00740078 /* HealthManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C9D2CB284A603E00740078 /* HealthManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +62,7 @@
 		A1C9D2C1284A5AD500740078 /* RepositoryProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepositoryProtocol.swift; sourceTree = "<group>"; };
 		A1C9D2C7284A5CE000740078 /* MainAssembler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainAssembler.swift; sourceTree = "<group>"; };
 		A1C9D2C9284A5D9A00740078 /* Managerassably.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Managerassably.swift; sourceTree = "<group>"; };
+		A1C9D2CB284A603E00740078 /* HealthManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -150,6 +152,7 @@
 		A1C9D2B5284A533D00740078 /* Data */ = {
 			isa = PBXGroup;
 			children = (
+				A1C9D2CB284A603E00740078 /* HealthManager.swift */,
 				A1C9D2B8284A53BE00740078 /* Repository */,
 				A1C9D2C0284A560A00740078 /* PresistenceStorage */,
 			);
@@ -349,6 +352,7 @@
 				A1C9D290284A527600740078 /* PersistenceController.swift in Sources */,
 				A1C9D2BD284A541200740078 /* WorkoutModel.swift in Sources */,
 				A1C9D289284A527500740078 /* ContentView.swift in Sources */,
+				A1C9D2CC284A603E00740078 /* HealthManager.swift in Sources */,
 				A1C9D2BA284A53CA00740078 /* Repository.swift in Sources */,
 				A1C9D2C2284A5AD500740078 /* RepositoryProtocol.swift in Sources */,
 				A1C9D2CA284A5D9A00740078 /* Managerassably.swift in Sources */,
