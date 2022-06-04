@@ -42,9 +42,11 @@ struct BarChartView: View {
                     } else {
                         ForEach(data.indices, id: \.self) { index in
                             let barWidth = frameWidth * data[index] / highestData
-                            BarView(datum: data[index], colors: colors)
-                                .highlight(with: highlightColor,
-                                           alignment: alignment)
+                            BarView(datum: data[index],
+                                    colors: colors,
+                                    barSize: CGSize(width: barWidth, height: barHeight),
+                                    highlightColor: highlightColor,
+                                    alignment: alignment)
                                 .frame(width: barWidth,
                                        height: barHeight,
                                        alignment: alignment)
@@ -72,17 +74,17 @@ struct BarChartView: View {
                     } else {
                     ForEach(data.indices, id: \.self) { index in
                         let barHeight = frameHeight * data[index] / highestData
-                        
-                        BarView(datum: data[index], colors: colors)
-                            .highlight(with: highlightColor,
-                                       alignment: alignment)
-                            .frame(width: barWidth,
-                                   height: barHeight,
-                                   alignment: alignment)
+                        BarView(datum: data[index],
+                                colors: colors,
+                                barSize: CGSize(width: barWidth,
+                                                height: barHeight),
+                                highlightColor: highlightColor,
+                                alignment: alignment)
                     }
                     }
                 }
-            }.padding(.leading, spacing)
+            }
+            .padding(.leading, spacing)
         default:
             Text("Unsupported alignment")
         }
@@ -90,79 +92,66 @@ struct BarChartView: View {
 }
 
 struct BarView: View {
+    @GestureState var isHolding: Bool = false
     var datum: Double
     var colors: [Color]
+    var barSize: CGSize
     var cornerRadius: CGFloat = 8
+    var highlightColor: Color
+    var alignment: Alignment
+    var reversedAlignment: UnitPoint {
+        switch alignment {
+        case .leading:
+            return .trailing
+        case .top:
+            return .bottom
+        case .trailing:
+            return .leading
+        case .bottom:
+            return .top
+        default:
+            return .center
+        }
+    }
     
     var gradient: LinearGradient {
         LinearGradient(gradient: Gradient(colors: colors),
-                       startPoint: .top, endPoint: .bottom)
+                       startPoint: .init(from: alignment),
+                       endPoint: reversedAlignment)
     }
     
     var body: some View {
+        ZStack(alignment: alignment) {
+            bar
+            if isHolding {
+                RoundedRectangle(cornerRadius: cornerRadius)
+                    .stroke(highlightColor)
+            }
+        }
+        .gesture(LongPressGesture(minimumDuration: 50,
+                                  maximumDistance: barSize.width / 2)
+            .updating($isHolding) { currentState, state, transaction in
+                state = currentState
+            }
+        )
+        .frame(width: barSize.width,
+               alignment: alignment)
+        .animation(.easeInOut, value: isHolding)
+    }
+    
+    @ViewBuilder
+    var bar: some View {
         RoundedRectangle(cornerRadius: cornerRadius)
             .fill(gradient)
             .opacity(datum == 0.0 ? 0.0 : 1.0)
-    }
-    
-    func highlight(with color: Color, alignment: Alignment) -> some View {
-        switch alignment {
-        case .leading:
-            return self.modifier(HighlightBar(alignment: .leading,
-                                              highlightColor: color,
-                                              cornerRadius: cornerRadius))
-        case .trailing:
-            return self.modifier(HighlightBar(alignment: .trailing,
-                                              highlightColor: color,
-                                              cornerRadius: cornerRadius))
-        case .top:
-            return self.modifier(HighlightBar(alignment: .top,
-                                              highlightColor: color,
-                                              cornerRadius: cornerRadius))
-        case .bottom:
-            return self.modifier(HighlightBar(alignment: .bottom,
-                                              highlightColor: color,
-                                              cornerRadius: cornerRadius))
-        default:
-            return self.modifier(HighlightBar(alignment: .center,
-                                              highlightColor: color,
-                                              cornerRadius: cornerRadius))
-        }
-    }
-    
-    struct HighlightBar: ViewModifier {
-        @GestureState var isHolding: Bool = false
-        var alignment: UnitPoint
-        var highlightColor: Color
-        var cornerRadius: CGFloat
-        
-        func body(content: Content) -> some View {
-            GeometryReader { proxy in
-                let isVertical = alignment == .top || alignment == .bottom
-                let barWidth = isVertical ? proxy.size.width : proxy.size.height
-                ZStack {
-                    content
-                        .scaleEffect(isHolding ? 0.5 : 1, anchor: alignment)
-                        .gesture(LongPressGesture(minimumDuration: 50,
-                                                  maximumDistance: barWidth / 2)
-                            .updating($isHolding) { currentState, state, transaction in
-                                state = currentState
-                            }
-                        )
-                    if isHolding {
-                        RoundedRectangle(cornerRadius: cornerRadius)
-                            .stroke(highlightColor)
-                    }
-                }
-                .animation(.easeInOut, value: isHolding)
-            }
-        }
+            .frame(height: barSize.height)
+            .scaleEffect(isHolding ? 0.5 : 1, anchor: .init(from: alignment))
     }
 }
 
 struct CharView_Previews: PreviewProvider {
     static var previews: some View {
-        let data: [Double] = [1, 2, 7, 8, 2, 4, 10]
+        let data: [Double] = [1, 3, 7, 2, 1, 6, 10]
         let colors: [Color] = [.blue]
         let spacing: CGFloat = 8
         VStack {
