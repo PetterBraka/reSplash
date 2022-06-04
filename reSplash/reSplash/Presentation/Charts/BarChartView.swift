@@ -9,11 +9,26 @@ import SwiftUI
 
 struct BarChartView: View {
     var data: [Double]
-    var colors: [Color]
+    var colors: [Color]?
     var spacing: CGFloat
     var alignment: Alignment
     var highlightColor: Color = .black
     var minBarWith: CGFloat = 2
+    
+    var reversedAlignment: UnitPoint {
+        switch alignment {
+        case .leading:
+            return .trailing
+        case .top:
+            return .bottom
+        case .trailing:
+            return .leading
+        case .bottom:
+            return .top
+        default:
+            return .center
+        }
+    }
     
     var highestData: Double {
         let max = data.max() ?? 1
@@ -90,11 +105,12 @@ struct BarChartView: View {
 struct BarView: View {
     @GestureState var isHolding: Bool = false
     var datum: Double
-    var colors: [Color]
+    var colors: [Color]?
     var barSize: CGSize
     var cornerRadius: CGFloat = 8
     var highlightColor: Color
     var alignment: Alignment
+    
     var reversedAlignment: UnitPoint {
         switch alignment {
         case .leading:
@@ -114,10 +130,14 @@ struct BarView: View {
         alignment == .trailing || alignment == .leading
     }
     
-    var gradient: LinearGradient {
-        LinearGradient(gradient: Gradient(colors: colors),
-                       startPoint: .init(from: alignment),
-                       endPoint: reversedAlignment)
+    var gradient: LinearGradient? {
+        if let colors = colors {
+            return LinearGradient(gradient: Gradient(colors: colors),
+                                  startPoint: .init(from: alignment),
+                                  endPoint: reversedAlignment)
+        } else {
+            return nil
+        }
     }
     
     var body: some View {
@@ -145,19 +165,27 @@ struct BarView: View {
     
     @ViewBuilder
     var bar: some View {
-        RoundedRectangle(cornerRadius: cornerRadius)
-            .fill(gradient)
-            .opacity(datum == 0.0 ? 0.0 : 1.0)
-            .frame(width: isVertical ? nil : barSize.width,
-                   height: isVertical ? barSize.height : nil)
-            .scaleEffect(isHolding ? 0.8 : 1, anchor: .init(from: alignment))
+        if let gradient = gradient {
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .fill(gradient)
+                .opacity(datum == 0.0 ? 0.0 : 1.0)
+                .frame(width: isVertical ? nil : barSize.width,
+                       height: isVertical ? barSize.height : nil)
+                .scaleEffect(isHolding ? 0.8 : 1, anchor: .init(from: alignment))
+        } else {
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .opacity(datum == 0.0 ? 0.0 : 1.0)
+                .frame(width: isVertical ? nil : barSize.width,
+                       height: isVertical ? barSize.height : nil)
+                .scaleEffect(isHolding ? 0.8 : 1, anchor: .init(from: alignment))
+        }
     }
 }
 
 struct CharView_Previews: PreviewProvider {
     static var previews: some View {
-        let data: [Double] = [1, 3, 7, 2, 10]
-        let colors: [Color] = [.blue]
+        let data: [Double] = [1, 3, 7, 2, 10, 2]
+        let colors: [Color] = [.blue, .yellow]
         let spacing: CGFloat = 8
         VStack {
             BarChartView(data: data,
@@ -165,7 +193,6 @@ struct CharView_Previews: PreviewProvider {
                          spacing: spacing,
                          alignment: .leading)
             BarChartView(data: data,
-                         colors: colors,
                          spacing: spacing,
                          alignment: .trailing)
             BarChartView(data: data,
@@ -173,10 +200,10 @@ struct CharView_Previews: PreviewProvider {
                          spacing: spacing,
                          alignment: .bottom)
             BarChartView(data: data,
-                         colors: colors,
                          spacing: spacing,
                          alignment: .top)
         }
+        .foregroundColor(.red)
         .padding(16)
     }
 }
