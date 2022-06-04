@@ -64,21 +64,24 @@ class HealthManager: HealthManagerProtocol {
     }
 
     func getWorkouts(for date: Date) -> AnyPublisher<[HKWorkout], HealthError> {
-        Future { [unowned self] promise in
-            let sampleType = HKWorkoutType.workoutType()
+        let sampleType = HKWorkoutType.workoutType()
+        guard healthStore.authorizationStatus(for: sampleType) == .sharingAuthorized else {
+            return Fail(error: HealthError.notAuthorized).eraseToAnyPublisher()
+        }
+        
+        // Get the date one week ago.
+        let calendar = Calendar.current
+        var components = calendar.dateComponents([.year, .month, .day], from: date)
+        components.day = components.day! - 7
+        let oneWeekAgo = calendar.date(from: components)
 
-            // Get the date one week ago.
-            let calendar = Calendar.current
-            var components = calendar.dateComponents([.year, .month, .day], from: Date())
-            components.day = components.day! - 7
-            let oneWeekAgo = calendar.date(from: components)
-
-            // Create a predicate for all samples within the last week.
-            let inLastWeek = HKQuery.predicateForSamples(withStart: oneWeekAgo,
-                                                         end: nil,
-                                                         options: [.strictStartDate])
-            let sortDescriptors = [NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)]
-            
+        // Create a predicate for all samples within the last week.
+        let inLastWeek = HKQuery.predicateForSamples(withStart: oneWeekAgo,
+                                                     end: nil,
+                                                     options: [.strictStartDate])
+        let sortDescriptors = [NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)]
+        
+        return Future { [unowned self] promise in
             // Create the query.
             let query = HKSampleQuery(sampleType: sampleType,
                                       predicate: inLastWeek,
@@ -93,7 +96,6 @@ class HealthManager: HealthManagerProtocol {
                 promise(.success(results))
             }
             healthStore.execute(query)
-        }
-        .eraseToAnyPublisher()
+        }.eraseToAnyPublisher()
     }
 }
