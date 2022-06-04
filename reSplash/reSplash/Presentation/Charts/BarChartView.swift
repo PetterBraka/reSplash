@@ -47,9 +47,6 @@ struct BarChartView: View {
                                     barSize: CGSize(width: barWidth, height: barHeight),
                                     highlightColor: highlightColor,
                                     alignment: alignment)
-                                .frame(width: barWidth,
-                                       height: barHeight,
-                                       alignment: alignment)
                         }
                     }
                 }
@@ -72,15 +69,14 @@ struct BarChartView: View {
                         }
                         Spacer()
                     } else {
-                    ForEach(data.indices, id: \.self) { index in
-                        let barHeight = frameHeight * data[index] / highestData
-                        BarView(datum: data[index],
-                                colors: colors,
-                                barSize: CGSize(width: barWidth,
-                                                height: barHeight),
-                                highlightColor: highlightColor,
-                                alignment: alignment)
-                    }
+                        ForEach(data.indices, id: \.self) { index in
+                            let barHeight = frameHeight * data[index] / highestData
+                            BarView(datum: data[index],
+                                    colors: colors,
+                                    barSize: CGSize(width: barWidth, height: barHeight),
+                                    highlightColor: highlightColor,
+                                    alignment: alignment)
+                        }
                     }
                 }
             }
@@ -114,6 +110,10 @@ struct BarView: View {
         }
     }
     
+    var isVertical: Bool {
+        alignment == .trailing || alignment == .leading
+    }
+    
     var gradient: LinearGradient {
         LinearGradient(gradient: Gradient(colors: colors),
                        startPoint: .init(from: alignment),
@@ -123,6 +123,8 @@ struct BarView: View {
     var body: some View {
         ZStack(alignment: alignment) {
             bar
+                .frame(width: barSize.width,
+                       height: barSize.height)
             if isHolding {
                 RoundedRectangle(cornerRadius: cornerRadius)
                     .stroke(highlightColor)
@@ -134,7 +136,9 @@ struct BarView: View {
                 state = currentState
             }
         )
-        .frame(width: barSize.width,
+        
+        .frame(width: isVertical ? nil : barSize.width,
+               height: isVertical ? barSize.height : nil,
                alignment: alignment)
         .animation(.easeInOut, value: isHolding)
     }
@@ -144,14 +148,15 @@ struct BarView: View {
         RoundedRectangle(cornerRadius: cornerRadius)
             .fill(gradient)
             .opacity(datum == 0.0 ? 0.0 : 1.0)
-            .frame(height: barSize.height)
-            .scaleEffect(isHolding ? 0.5 : 1, anchor: .init(from: alignment))
+            .frame(width: isVertical ? nil : barSize.width,
+                   height: isVertical ? barSize.height : nil)
+            .scaleEffect(isHolding ? 0.8 : 1, anchor: .init(from: alignment))
     }
 }
 
 struct CharView_Previews: PreviewProvider {
     static var previews: some View {
-        let data: [Double] = [1, 3, 7, 2, 1, 6, 10]
+        let data: [Double] = [1, 3, 7, 2, 10]
         let colors: [Color] = [.blue]
         let spacing: CGFloat = 8
         VStack {
