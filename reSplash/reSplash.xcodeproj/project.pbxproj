@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		A1350795284B86E900653EC8 /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A1350794284B86E900653EC8 /* HealthKit.framework */; };
+		A19AF395284B90DE0048EA7A /* WorkoutCellView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A19AF394284B90DE0048EA7A /* WorkoutCellView.swift */; };
+		A19AF397284B92CF0048EA7A /* BarChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A19AF396284B92CF0048EA7A /* BarChartView.swift */; };
 		A1C9D287284A527500740078 /* reSplashApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C9D286284A527500740078 /* reSplashApp.swift */; };
 		A1C9D289284A527500740078 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C9D288284A527500740078 /* ContentView.swift */; };
 		A1C9D28B284A527600740078 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1C9D28A284A527600740078 /* Assets.xcassets */; };
@@ -47,6 +49,8 @@
 /* Begin PBXFileReference section */
 		A1350792284B86E900653EC8 /* reSplash.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = reSplash.entitlements; sourceTree = "<group>"; };
 		A1350794284B86E900653EC8 /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
+		A19AF394284B90DE0048EA7A /* WorkoutCellView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutCellView.swift; sourceTree = "<group>"; };
+		A19AF396284B92CF0048EA7A /* BarChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarChartView.swift; sourceTree = "<group>"; };
 		A1C9D283284A527500740078 /* reSplash.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = reSplash.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1C9D286284A527500740078 /* reSplashApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = reSplashApp.swift; sourceTree = "<group>"; };
 		A1C9D288284A527500740078 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -103,6 +107,21 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		A19AF398284B93AC0048EA7A /* Charts */ = {
+			isa = PBXGroup;
+			children = (
+				A19AF396284B92CF0048EA7A /* BarChartView.swift */,
+			);
+			path = Charts;
+			sourceTree = "<group>";
+		};
+		A19AF39B284B97C00048EA7A /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		A1C9D27A284A527500740078 = {
 			isa = PBXGroup;
 			children = (
@@ -132,6 +151,7 @@
 				A1C9D2B5284A533D00740078 /* Data */,
 				A1C9D2B6284A538D00740078 /* Domain */,
 				A1C9D2B7284A539900740078 /* Presentation */,
+				A19AF39B284B97C00048EA7A /* Resources */,
 				A1C9D28A284A527600740078 /* Assets.xcassets */,
 				A1C9D28C284A527600740078 /* Preview Content */,
 			);
@@ -184,8 +204,10 @@
 		A1C9D2B7284A539900740078 /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
+				A19AF398284B93AC0048EA7A /* Charts */,
 				A1C9D288284A527500740078 /* ContentView.swift */,
 				A1C9D286284A527500740078 /* reSplashApp.swift */,
+				A19AF394284B90DE0048EA7A /* WorkoutCellView.swift */,
 			);
 			path = Presentation;
 			sourceTree = "<group>";
@@ -365,9 +387,11 @@
 				A1C9D2BF284A542200740078 /* SwimmingModel.swift in Sources */,
 				A1C9D290284A527600740078 /* PersistenceController.swift in Sources */,
 				A1C9D2BD284A541200740078 /* WorkoutModel.swift in Sources */,
+				A19AF397284B92CF0048EA7A /* BarChartView.swift in Sources */,
 				A1C9D289284A527500740078 /* ContentView.swift in Sources */,
 				A1C9D2CE284A6AE400740078 /* HealthManager.swift in Sources */,
 				A1C9D2BA284A53CA00740078 /* Repository.swift in Sources */,
+				A19AF395284B90DE0048EA7A /* WorkoutCellView.swift in Sources */,
 				A1C9D2C2284A5AD500740078 /* RepositoryProtocol.swift in Sources */,
 				A1C9D2CA284A5D9A00740078 /* ManagerAssably.swift in Sources */,
 				A1C9D287284A527500740078 /* reSplashApp.swift in Sources */,
