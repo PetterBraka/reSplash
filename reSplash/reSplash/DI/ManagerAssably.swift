@@ -13,5 +13,10 @@ class ManagerAssembly: Assembly {
         container.register(PersistenceControllerProtocol.self) { _ in
             PersistenceController()
         }.inObjectScope(.container)
+        
+        // Health
+        container.register(HealthManagerProtocol.self) { _ in
+            HealthManager()
+        }.inObjectScope(.container)
     }
 }

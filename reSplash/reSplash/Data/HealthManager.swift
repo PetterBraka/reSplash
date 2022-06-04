@@ -12,13 +12,14 @@ import UserNotifications
 
 protocol HealthManagerProtocol {
     func needsAccessRequest() -> Bool
-    func requestAccess() async throws
+    func requestAccess() -> AnyPublisher<Bool, HealthError>
     func getWorkouts(for date: Date) -> AnyPublisher<[HKWorkout], HealthError>
 }
 
 // Possible errors that can occur
 enum HealthError: Error {
     case notAuthorized
+    case failedAutorizing
     case cantSaveEmpty
     case emptyResult
     case failedReadingDate(with: Error)
@@ -42,10 +43,7 @@ enum HealthType: CaseIterable {
 }
 
 class HealthManager: HealthManagerProtocol {
-    static let shared = HealthManager()
-
     private let healthStore = HKHealthStore()
-
     private let readTypes: Set<HKObjectType> = Set(HealthType.allCases.map { $0.toObjectType() })
 
     func needsAccessRequest() -> Bool {
@@ -54,32 +52,36 @@ class HealthManager: HealthManagerProtocol {
         }
     }
 
-    func requestAccess() async throws {
-        try await healthStore.requestAuthorization(toShare: [],
-                                                   read: readTypes)
+    func requestAccess() -> AnyPublisher<Bool, HealthError> {
+        return Future<Bool, HealthError> { [unowned self] promise in
+            healthStore.requestAuthorization(toShare: [], read: readTypes) { success, error in
+                if error != nil {
+                    return promise(.failure(.failedAutorizing))
+                }
+                return promise(.success(success))
+            }
+        }.eraseToAnyPublisher()
     }
 
     func getWorkouts(for date: Date) -> AnyPublisher<[HKWorkout], HealthError> {
         Future { [unowned self] promise in
-            let sampleType = HKSampleType.workoutType()
-            guard healthStore.authorizationStatus(for: sampleType) == .sharingAuthorized else {
-                promise(.failure(HealthError.notAuthorized))
-                return
-            }
+            let sampleType = HKWorkoutType.workoutType()
 
+            // Get the date one week ago.
             let calendar = Calendar.current
-            let components = calendar.dateComponents([.calendar, .year, .month, .day],
-                                                     from: date)
+            var components = calendar.dateComponents([.year, .month, .day], from: Date())
+            components.day = components.day! - 7
+            let oneWeekAgo = calendar.date(from: components)
 
-            let startDate = calendar.date(from: components)!
-            let endDate = calendar.date(byAdding: .day, value: 1, to: startDate)!
-
-            let today = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: [])
+            // Create a predicate for all samples within the last week.
+            let inLastWeek = HKQuery.predicateForSamples(withStart: oneWeekAgo,
+                                                         end: nil,
+                                                         options: [.strictStartDate])
             let sortDescriptors = [NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: false)]
-
+            
             // Create the query.
             let query = HKSampleQuery(sampleType: sampleType,
-                                      predicate: today,
+                                      predicate: inLastWeek,
                                       limit: 12,
                                       sortDescriptors: sortDescriptors) { query, results, error in
                 if let error = error {
@@ -92,7 +94,6 @@ class HealthManager: HealthManagerProtocol {
             }
             healthStore.execute(query)
         }
-        .receive(on: DispatchQueue.main)
         .eraseToAnyPublisher()
     }
 }
