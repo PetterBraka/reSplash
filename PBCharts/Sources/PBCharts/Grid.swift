@@ -13,14 +13,18 @@ struct Grid: View {
     var alignment: Alignment
     var body: some View {
         ZStack {
-            vGrid
-            hGrid
+            VGridLines(data: data, spacing: spacing, alignment: alignment)
+            HGridLines(data: data, spacing: spacing, alignment: alignment)
         }
     }
-    
-    @ViewBuilder
-    var vGrid: some View {
-        HStack(alignment: alignment == .bottom ? .bottom : .top,
+}
+
+struct VGridLines: View {
+    var data: [Double]
+    var spacing: CGFloat
+    var alignment: Alignment
+    var body: some View {
+        HStack(alignment: alignment == .top ? .top : .bottom,
                spacing: spacing) {
             ForEach(data.indices, id: \.self) { index in
                 Line()
@@ -30,10 +34,25 @@ struct Grid: View {
             }
         }
     }
-    
-    @ViewBuilder
-    var hGrid: some View {
-        VStack(alignment: alignment == .leading ? .leading : .trailing,
+}
+
+struct VGridLine: View {
+    var alignment: Alignment
+    var body: some View {
+        Line()
+            .stroke(style: StrokeStyle(lineWidth: 2,
+                                       dash: [8]))
+            .frame(maxWidth: .infinity)
+    }
+}
+
+
+struct HGridLines: View {
+    var data: [Double]
+    var spacing: CGFloat
+    var alignment: Alignment
+    var body: some View {
+        VStack(alignment: alignment == .trailing ? .trailing : .leading,
                spacing: spacing) {
             ForEach(data.indices, id: \.self) { index in
                 Line(isHorisontal: true)
@@ -42,5 +61,16 @@ struct Grid: View {
                     .frame(maxHeight: .infinity)
             }
         }
+               .padding(.horizontal, spacing)
+    }
+}
+
+struct HGridLine: View {
+    var alignment: Alignment
+    var body: some View {
+        Line(isHorisontal: true)
+            .stroke(style: StrokeStyle(lineWidth: 2,
+                                       dash: [8]))
+            .frame(maxHeight: .infinity)
     }
 }

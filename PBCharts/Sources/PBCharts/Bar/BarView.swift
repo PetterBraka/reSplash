@@ -12,7 +12,7 @@ internal struct BarView: View {
     var datum: Double
     var colors: [Color]?
     var barLength: CGFloat
-    var cornerRadius: CGFloat = 8
+    var cornerRadius: CGFloat
     var highlightColor: Color
     var alignment: Alignment
     
@@ -64,18 +64,12 @@ internal struct BarView: View {
 
 struct BarView_Previews: PreviewProvider {
     static var previews: some View {
-        let data: [Double] = [1, 2, 7, 3, 10, 1.4]
-        let colors: [Color] = [.blue, .yellow]
+        let data: [Double] = [1, 2, 7, 3, 9, 1.4]
         VStack {
             BarChartView(data: data,
                          alignment: .leading)
-//            BarChartView(data: data,
-//                         alignment: .trailing)
-//            BarChartView(data: data,
-//                         colors: colors,
-//                         alignment: .bottom)
-//            BarChartView(data: data,
-//                         alignment: .top)
+            BarChartView(data: data,
+                         alignment: .bottom)
         }
         .foregroundColor(.red)
         .padding(16)
