@@ -6,12 +6,15 @@
 //
 
 import SwiftUI
+import PBCharts
 
 struct WorkoutCellView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("Workout title - date")
             Text("Distance, Duration, avg speed")
+            BarChartView()
+                .frame(height: 300)
         }
         .padding(16)
         .background(

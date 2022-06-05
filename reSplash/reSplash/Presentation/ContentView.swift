@@ -6,11 +6,14 @@
 //
 
 import SwiftUI
-import CoreData
 
 struct ContentView: View {
+    let data: [Double] = [1, 3, 7, 2, 10, 2]
+    let spacing: CGFloat = 24
     var body: some View {
-        Text("Hello world")
+        VStack {
+            WorkoutCellView()
+        }.foregroundColor(.blue)
     }
 }
 
